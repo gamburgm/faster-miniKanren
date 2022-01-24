@@ -13,6 +13,24 @@
          var?
          always-wrap-reified?)
 
+(module+ private  
+  (provide walk
+           unify
+           var?
+           fresh-wo-interleave)
+
+  (define-syntax fresh-wo-interleave
+    (syntax-rules ()
+      ((_ (x ...) g0 g ...)
+       (lambdag@ (st)
+         ; this inc triggers interleaving
+         (let ((scope (subst-scope (state-S st))))
+           (let ((x (var scope)) ...)
+             (bind* (g0 st) g ...)))))))
+
+  )
+
+
 (define empty-intmap (hasheq))
 (define (intmap-count m) (hash-count m))
 (define (intmap-ref m k) (hash-ref m k (lambda () unbound)))
